@@ -7,12 +7,12 @@ class fidelity{
                 private $Headers = Array();
 	
                 //each row of the file is converted into an array
-		public function read_file_into_array()
+		public function read_file_into_array($filename)
 		{
                         print "Reading column headings into array";
              
 			$row=1;
-			if (($handle = fopen("./documents/Portfolio_Positions_Jun-06-2025.csv", "r")) !== FALSE) {
+			if (($handle = fopen("./documents/$filename", "r")) !== FALSE) {
 				while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                                     if(empty($data[0])) // don't include blank data
                                     {
@@ -26,6 +26,15 @@ class fidelity{
                         
                         $this->setHeaders();
                         return $this->rowData;
+		}
+                
+                //each row of the file is converted into an array
+		public function getFiles()
+		{
+                    $directory = './documents/';
+                    $files = array_diff(scandir($directory), array('..', '.'));
+                        print "Reading column headings into array";
+                        return $files;
 		}
                 
                 
@@ -57,6 +66,38 @@ class fidelity{
                     
                 }
                 
+                function sendPostRequest($data) {
+                    
+                    $url = "https://cyrusbavarian.com/cynoteapi2/index.php/fidelity/test";
+                            
+                    // Initialize cURL session
+                    $ch = curl_init($url);
+
+                    // Set cURL options
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+                    // Execute the request and get the response
+                    $response = curl_exec($ch);
+
+                    // Handle errors
+                    if ($response === false) {
+                        return 'Error: ' . curl_error($ch);
+                    }
+
+                    // Close the cURL session
+                    curl_close($ch);
+
+                    return $response;
+                }
+
+               
+
+                
                 
                 function clean($string) {
                     $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
@@ -72,22 +113,47 @@ class fidelity{
 $fi= new fidelity();
 
 
-$data = $fi->read_file_into_array();
 
 
-foreach($data as $row)
+
+$files = $fi->getFiles();
+
+
+foreach($files as $fileName)
 {
-    echo json_encode($row) . "\n";
-    
-    $rowArray = $fi->convertRowToKV($row);
-    
-    foreach($rowArray as $k=>$v)
-    {
-        echo $k . "=" . $v . "\n" ;
-    }
-    echo "-----------------\n";
-}
+    echo "Parsing file: " . $fileName . "\n";
+    $data = $fi->read_file_into_array($fileName);
 
+    //each stock is a row, several stocks in a file
+    foreach($data as $i => $row)
+    {
+        echo "Inserting Data: " . substr(implode(" ",$row), 0, 50) . "...";
+        if($i>2)
+        {
+            
+
+
+        //echo json_encode($row) . "\n";
+
+        $rowArray = $fi->convertRowToKV($row);
+
+            $response = $fi->sendPostRequest($rowArray);
+            //
+            
+            $ra = json_decode($response,true);
+            //echo $ra["result"] . "";
+            if($ra["result"])
+            {
+                echo "Success!" . "\n";
+            }
+            else{
+                echo "fail!" . $response . "\n";
+            }
+            
+                     sleep (2);
+        }
+}
+}
 
 
 
