@@ -59,7 +59,7 @@ class fidelity{
                     foreach($this->Headers as $k=>$header)
                     {
                         
-                        $kvArray[$header] = empty($row[$k]) ? "" : $row[$k];
+                        $kvArray[$header] = empty($row[$k]) ? "" : preg_replace('/[^A-Za-z0-9\-\.]/', '', $row[$k]);
                     }
                     
                     return $kvArray;
@@ -181,25 +181,33 @@ foreach($files as $fileName)
     //each stock is a row, several stocks in a file
     foreach($data as $i => $row)
     {
-        echo "Inserting Data: " . substr(implode(" ",$row), 0, 50) . "...";
-        if($i>2)
+        echo "\nInserting Data: " . substr(implode(" ",$row), 0, 50) . "...";
+        if($i>2) //ignore first 2 rows
         {
             //echo json_encode($row) . "\n";
 
             $rowArray = $fi->convertRowToKV($row);
             $rowArray["FileName"] = $fileName;
             $rowArray["dtts"] = $formattedDate;
+            //echo "\n\n###### Row Array : ".json_encode($rowArray);
             $response = $fi->sendPostRequest($rowArray);
 
             $ra = json_decode($response, true);
+            
             //echo $ra["result"] . "";
             if ($ra["result"]) {
                 echo "Success!" . "\n";
             } else {
                 echo "fail!" . $response . "\n";
             }
+            
+            //break;
 
             sleep(1);
+        }
+        else
+        {
+            echo "Ignoring this row...";
         }
     }
     
