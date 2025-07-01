@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . './lib/fidelity.php';
+require __DIR__ . '/lib/fidelity.php';
 
 
 
@@ -10,11 +10,16 @@ $fi= new fidelity();
 $getParams["stocks"] = 'BABA';
 $response = $fi->sendGetRequest($getParams);
 
-$resultArray = json_decode($response);
+$resultArray = json_decode($response,true);
 
-foreach($resultArray as $row)
+if(isset($resultArray["result"]) && $resultArray["result"])
 {
-    echo $row;
+
+foreach($resultArray as $k=>$v)
+{
+    echo $k ." \n\n";
+}
+    
 }
 
 
