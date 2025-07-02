@@ -107,6 +107,24 @@ class fidelity{
                     $response = file_get_contents($url);
                     return $response;
                 }
+                
+                 function checkFileExists($params = []) {
+                    // Build the query string from the $params array
+                    $queryString = http_build_query($params);
+
+                    // Create the full URL
+                    $url = "https://cyrusbavarian.com/cynoteapi2/index.php/fidelity/fileexist" . '?' . $queryString;
+
+                    // Send the GET request and return the response
+                    $response = file_get_contents($url);
+                    
+                    //parse the response and return true or false
+                    $resultArray = json_decode($response,true);
+
+                    return $resultArray["fileExists"];
+
+                    
+                }
 
 
                
