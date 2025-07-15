@@ -4,6 +4,7 @@ require __DIR__ . '/lib/fidelity.php';
 
 
 
+
 /*MAIN*/
 $fi= new fidelity();
 $files = $fi->getFiles(); //read csv's in the ./documents directory

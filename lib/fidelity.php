@@ -68,7 +68,7 @@ class fidelity{
                 
                 function sendPostRequest($data) {
                     
-                    $url = "https://cyrusbavarian.com/cynoteapi2/index.php/fidelity/FileInsert";
+                    $url = "https://cyrusbavarian.com/cynoteapi/index.php/fidelity/FileInsert";
                             
                     // Initialize cURL session
                     $ch = curl_init($url);
@@ -100,7 +100,7 @@ class fidelity{
                     $queryString = http_build_query($params);
 
                     // Create the full URL
-                    $url = "https://cyrusbavarian.com/cynoteapi2/index.php/fidelity/getFidelity" . '?' . $queryString;
+                    $url = "https://cyrusbavarian.com/cynoteapi/index.php/fidelity/getFidelity" . '?' . $queryString;
 
                     echo $url;
                     // Send the GET request and return the response
@@ -113,7 +113,7 @@ class fidelity{
                     $queryString = http_build_query($params);
 
                     // Create the full URL
-                    $url = "https://cyrusbavarian.com/cynoteapi2/index.php/fidelity/fileexist" . '?' . $queryString;
+                    $url = "https://cyrusbavarian.com/cynoteapi/index.php/fidelity/fileexist" . '?' . $queryString;
 
                     // Send the GET request and return the response
                     $response = file_get_contents($url);
