@@ -3,8 +3,18 @@
 
 class fidelity{
     
-                private $rowData = Array();
-                private $Headers = Array();
+		protected $cynoteapi_host = "https://198.58.118.29";
+		//protected $cynoteapi_host = "https://www.cyrusbavarian.com";
+		protected $cynoteapi_port = "2020";
+		protected $cynoteapi_url = null;
+		private $rowData = Array();
+		private $Headers = Array();
+				
+				
+		function __construct()
+		{
+			$this->cynoteapi_url = $this->cynoteapi_host . ":" . $this->cynoteapi_port;
+		}
 	
                 //each row of the file is converted into an array
 		public function read_file_into_array($filename)
@@ -68,7 +78,7 @@ class fidelity{
                 
                 function sendPostRequest($data) {
                     
-                    $url = "https://198.58.118.29:2020/fidelity/FileInsert";
+                    $url = $this->cynoteapi_url . "/fidelity/FileInsert";
                             
                     // Initialize cURL session
                     $ch = curl_init($url);
@@ -85,7 +95,7 @@ class fidelity{
                     $response = curl_exec($ch);
 
                     // Handle errors
-                    if ($response === false || $response === null) {
+                    if ($response === false) {
                         return 'Error: ' . curl_error($ch);
                     }
 
@@ -100,7 +110,7 @@ class fidelity{
                     $queryString = http_build_query($params);
 
                     // Create the full URL
-                    $url = "https://cyrusbavarian.com/fidelity/getFidelity" . '?' . $queryString;
+                    $url = $this->cynoteapi_url . "/fidelity/getFidelity" . '?' . $queryString;
 
                     echo $url;
                     // Send the GET request and return the response
@@ -113,7 +123,7 @@ class fidelity{
                     $queryString = http_build_query($params);
 
                     // Create the full URL
-                    $url = "https://cyrusbavarian.com/fidelity/fileexist" . '?' . $queryString;
+                    $url = $this->cynoteapi_url . "/fidelity/fileexist" . '?' . $queryString;
 
                     // Send the GET request and return the response
                     $response = file_get_contents($url);
